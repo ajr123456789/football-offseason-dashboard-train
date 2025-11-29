@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Football Offseason Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #050810;
+      --bg-alt: #0b1020;
+      --card: #11182a;
+      --accent: #33c3ff;
+      --accent-soft: rgba(51, 195, 255, 0.2);
+      --text: #f7f8fc;
+      --muted: #a2a9c5;
+      --danger: #ff4f5e;
+      --border: #1c2438;
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --shadow-soft: 0 18px 45px rgba(0, 0, 0, 0.65);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at top, #16213e 0, #050810 55%, #02030a 100%);
+      color: var(--text);
+      min-height: 1vh;
+      display: flex;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .layout {
+      display: flex;
+      width: 100%;
+      max-width: 1260px;
+      margin: 0 auto;
+      gap: 20px;
+      padding: 16px;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 250px;
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.96), rgba(2, 6, 23, 0.98));
+      border-radius: var(--radius-lg);
+      padding: 18px 16px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-soft);
+      position: sticky;
+      top: 16px;
+      height: fit-content;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .brand-badge {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 20% 20%, #38bdf8, #0f172a);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    .brand-title {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .brand-title span:first-child {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .brand-title span:last-child {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+    }
+
+    .divider {
+      height: 1px;
+      background: radial-gradient(circle, rgba(148, 163, 184, 0.35), transparent);
+      border-radius: 999px;
+      margin: 10px 0 14px;
+    }
+
+    .nav-section-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 16px;
+    }
+
+    .nav-item button {
+      width: 100%;
+      text-align: left;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      padding: 6px 8px;
+      border-radius: 10px;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s, transform 0.08s;
+    }
+
+    .nav-item button span.icon {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .nav-item button:hover {
+      background: rgba(148, 163, 184, 0.08);
+      color: var(--text);
+      transform: translateY(-0.5px);
+    }
+
+    .nav-item button.active {
+      background: var(--accent-soft);
+      color: var(--text);
+      border: 1px solid rgba(56, 189, 248, 0.7);
+    }
+
+    .sidebar-footer {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 10px;
+      background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.18), rgba(15, 23, 42, 0.9));
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .sidebar-footer strong {
+      color: var(--text);
+    }
+
+    /* MAIN CONTENT */
+    .content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, rgba(15, 118, 187, 0.25), rgba(15, 23, 42, 0.95));
+      border-radius: var(--radius-lg);
+      padding: 16px 18px;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .hero-main {
+      max-width: 420px;
+    }
+
+    .hero-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .hero-subtitle {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .hero-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .tag {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      color: var(--muted);
+      backdrop-filter: blur(6px);
+      background-color: rgba(15, 23, 42, 0.6);
+    }
+
+    .hero-metrics {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: stretch;
+    }
+
+    .metric-card {
+      min-width: 110px;
+      background: rgba(15, 23, 42, 0.9);
+      border-radius: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .metric-label {
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .metric-value {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .metric-note {
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .metric-input {
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      padding: 4px 6px;
+      font-size: 12px;
+      background: rgba(15, 23, 42, 0.95);
+      color: var(--text);
+    }
+
+    .btn-sm {
+      margin-top: 4px;
+      border-radius: 8px;
+      border: none;
+      padding: 4px 6px;
+      font-size: 11px;
+      cursor: pointer;
+      background: linear-gradient(135deg, #0ea5e9, #22c55e);
+      color: #0b1020;
+      font-weight: 600;
+    }
+
+    .btn-sm:hover {
+      filter: brightness(1.05);
+    }
+
+    /* SECTIONS */
+    .sections {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    section {
+      background: rgba(9, 12, 23, 0.96);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      padding: 14px 16px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+      display: none;
+    }
+
+    section.active {
+      display: block;
+    }
+
+    section h2 {
+      font-size: 17px;
+      margin-bottom: 6px;
+    }
+
+    section .section-subtitle {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    h3 {
+      font-size: 14px;
+      margin-top: 10px;
+      margin-bottom: 4px;
+    }
+
+    p {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 6px;
+    }
+
+    ul {
+      margin-left: 16px;
+      margin-bottom: 6px;
+    }
+
+    li {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.1fr);
+      gap: 10px;
+    }
+
+    .card {
+      background: var(--bg-alt);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      padding: 10px 10px;
+    }
+
+    .card h4 {
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    .card p,
+    .card li {
+      font-size: 12px;
+    }
+
+    .pill-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 4px;
+      margin-bottom: 6px;
+    }
+
+    .pill {
+      font-size: 11px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      color: var(--muted);
+    }
+
+    /* TRACKING */
+    .tracking-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.1fr);
+      gap: 10px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 6px;
+    }
+
+    label {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    input[type="text"],
+    input[type="number"],
+    textarea,
+    select {
+      border-radius: 8px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      padding: 6px 8px;
+      font-size: 13px;
+      background: rgba(15, 23, 42, 0.95);
+      color: var(--text);
+      resize: vertical;
+      min-height: 32px;
+    }
+
+    textarea {
+      min-height: 70px;
+    }
+
+    .btn-primary {
+      border-radius: 999px;
+      border: none;
+      padding: 6px 10px;
+      font-size: 13px;
+      cursor: pointer;
+      background: linear-gradient(135deg, #0ea5e9, #22c55e);
+      color: #020617;
+      font-weight: 600;
+      margin-top: 4px;
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.05);
+    }
+
+    .btn-outline {
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      padding: 5px 9px;
+      font-size: 11px;
+      cursor: pointer;
+      background: transparent;
+      color: var(--muted);
+      margin-left: 4px;
+    }
+
+    .btn-outline:hover {
+      background: rgba(148, 163, 184, 0.1);
+      color: var(--text);
+    }
+
+    .small-text {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 6px;
+    }
+
+    th,
+    td {
+      border: 1px solid rgba(30, 41, 59, 0.9);
+      padding: 4px 6px;
+      font-size: 11px;
+      text-align: left;
+    }
+
+    th {
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    tr:nth-child(even) td {
+      background: rgba(15, 23, 42, 0.75);
+    }
+
+    .badge-phase {
+      display: inline-block;
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.6);
+      color: var(--text);
+      margin-left: 4px;
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        position: static;
+      }
+
+      .nav-list {
+        flex-wrap: wrap;
+        flex-direction: row;
+      }
+
+      .nav-item {
+        flex: 1 0 45%;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .hero {
+        padding: 12px;
+      }
+
+      .two-col,
+      .tracking-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .sidebar {
+        padding: 12px;
+      }
+
+      section {
+        padding: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-badge">LB</div>
+        <div class="brand-title">
+          <span>Offseason Control</span>
+          <span>OLB / Nickel • 16</span>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="nav-section-title">Dashboard</div>
+      <ul class="nav-list">
+        <li class="nav-item">
+          <button data-target="overview" class="active">
+            <span class="icon">🏠</span> Overview
+          </button>
+        </li>
+        <li class="nav-item">
+          <button data-target="phases">
+            <span class="icon">📅</span> Phases
+          </button>
+        </li>
+        <li class="nav-item">
+          <button data-target="weekly">
+            <span class="icon">🧭</span> Weekly Template
+          </button>
+        </li>
+        <li class="nav-item">
+          <button data-target="fieldwork">
+            <span class="icon">⚡</span> Field Work
+          </button>
+        </li>
+        <li class="nav-item">
+          <button data-target="nutrition">
+            <span class="icon">🍽️</span> Nutrition
+          </button>
+        </li>
+        <li class="nav-item">
+          <button data-target="recovery">
+            <span class="icon">💤</span> Recovery
+          </button>
+        </li>
+        <li class="nav-item">
+          <button data-target="tracking">
+            <span class="icon">📊</span> Tracking
+          </button>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <strong>Rule #1:</strong> School first. If needed, skip:
+        <br />• Wed optional lift<br />• Sat field work
+        <br /><br />Hit 5+ quality sessions/week and keep grades high.
+      </div>
+    </aside>
+
+    <main class="content">
+      <div class="hero">
+        <div class="hero-main">
+          <div class="hero-title">Football Offseason Dashboard</div>
+          <div class="hero-subtitle">
+            16 y/o OLB / Nickel • 5'10", 175 lbs. Goal: add size, speed, and explosiveness and
+            peak July–August for camps and season.
+          </div>
+          <div class="hero-tags">
+            <span class="tag">3× Facility / week</span>
+            <span class="tag">2× Strength Lifts</span>
+            <span class="tag">1× Field Work</span>
+            <span class="tag">Sun = Full Rest</span>
+          </div>
+        </div>
+        <div class="hero-metrics">
+          <div class="metric-card">
+            <div class="metric-label">Today’s Bodyweight (lbs)</div>
+            <input type="number" id="weightInput" class="metric-input" placeholder="e.g. 178" />
+            <button class="btn-sm" id="saveWeightBtn">Save</button>
+            <div class="metric-note" id="weightNote">Target: 185–195 by July.</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Sleep Last Night (hrs)</div>
+            <input type="number" id="sleepInput" class="metric-input" placeholder="e.g. 8.0" />
+            <button class="btn-sm" id="saveSleepBtn">Save</button>
+            <div class="metric-note">Goal: 8–8.5 hrs, especially after hard days.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sections">
+        <!-- OVERVIEW -->
+        <section id="overview" class="active">
+          <h2>Overview</h2>
+          <p class="section-subtitle">
+            High-level roadmap for your offseason. The structure stays the same. Intensity and focus change by phase.
+          </p>
+          <div class="two-col">
+            <div class="card">
+              <h4>Annual Structure</h4>
+              <ul>
+                <li><strong>Phase 1 (Dec–Jan):</strong> Foundation — technique, volume, first size gains.</li>
+                <li><strong>Phase 2 (Feb–Apr):</strong> Size + strength — main mass and strength block.</li>
+                <li><strong>Phase 3 (May–Jul):</strong> Power + speed peak — explosiveness, COD, game-speed work.</li>
+                <li><strong>Phase 4 (Aug):</strong> Deload + camp prep — lower volume, keep speed, arrive fresh.</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h4>Weekly Rhythm (All Phases)</h4>
+              <ul>
+                <li><strong>Mon:</strong> Facility (speed, plyos, their lift)</li>
+                <li><strong>Tue:</strong> Lower body strength</li>
+                <li><strong>Wed:</strong> Facility + optional hypertrophy (float day)</li>
+                <li><strong>Thu:</strong> Upper body strength</li>
+                <li><strong>Fri:</strong> Facility</li>
+                <li><strong>Sat:</strong> Field work (agility, position work, speed)</li>
+                <li><strong>Sun:</strong> Full rest and recovery</li>
+              </ul>
+              <p class="small-text">
+                If school workload is heavy, first things to cut:<br />
+                1) Wed optional volume 2) Sat field work.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- PHASES -->
+        <section id="phases">
+          <h2
